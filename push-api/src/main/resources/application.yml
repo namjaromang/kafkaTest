@@ -1,0 +1,94 @@
+server:
+  port: 8200
+
+spring:
+  liquibase:
+    contexts: dev
+  datasource:
+    tomcat:
+      validation-query: /* ping */ SELECT 1;
+      test-on-borrow: true
+      testWhileIdle: true
+      max-wait: 30000
+      max-active: 400
+    username: root
+    password: 1111
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: jdbc:log4jdbc:mysql://localhost:3309/push?zeroDateTimeBehavior=convertToNull&characterEncoding=UTF-8&serverTimezone=UTC
+  #    driver-class-name: com.mysql.jdbc.Driver
+  #    url: jdbc:mysql://localhost:3309/push?zeroDateTimeBehavior=convertToNull&characterEncoding=UTF-8&serverTimezone=UTC
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: none
+        jdbc:
+          time_zone: UTC
+          batch_size: 200
+          batch_versioned_data: true
+        order_inserts: true
+        order_updates: true
+        enable_lazy_load_no_trans: true
+    hibernate:
+      ddl-auto: none
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+
+graphql:
+  servlet:
+    mapping: /graphql
+    enabled: true
+    corsEnabled: false
+    #    cors:
+    #      allowed-origins: http://some.domain.com
+    # if you want to @ExceptionHandler annotation for custom GraphQLErrors
+    exception-handlers-enabled: true
+    contextSetting: PER_REQUEST_WITH_INSTRUMENTATION
+  datetime:
+    scalars:
+      date:
+        scalarName: Date
+      localDate:
+        scalarName: LocalDate
+      localDateTime:
+        scalarName: LocalDateTime
+      localTime:
+        scalarName: LocalTime
+      zone-conversion-enabled: true
+
+altair:
+  mapping: /altair
+  endpoint:
+    graphql: /graphql
+    subscriptions: /subscriptions
+  subscriptions:
+    timeout: 30
+    reconnect: false
+  static:
+    basePath: /
+  enabled: true
+  pageTitle: Altair
+  cdn:
+    enabled: true
+    version: 2.1.7
+  props:
+    resources:
+      defaultQuery: graphql/altair/defaultQuery.graphql
+      variables: graphql/altair/variables.graphql
+  headers:
+    Authorization: "Bearer <your-token>"
+
+onemedics:
+  commonAuthUrl: http://dev.onemedics.net:8100
+  frontDomain: https://dev.dosoo.net,https://backoffice-dev.onemedics.net
+
+log4jdbc:
+  spylogdelegator:
+    name: net.sf.log4jdbc.log.slf4j.Slf4jSpyLogDelegator
+  dump:
+    sql:
+      maxlinelength: 0

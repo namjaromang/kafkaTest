@@ -1,0 +1,3 @@
+rootProject.name = 'push-module'
+include 'push-api'
+include 'push-sdk'

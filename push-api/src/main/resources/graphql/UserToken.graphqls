@@ -1,0 +1,75 @@
+scalar Date
+
+type UserToken {
+    # 사용자토큰아이디
+    userTokenId: Int!
+    # 사용자아이디
+    userId: Int!
+    #유저명
+    username: String
+    #핸드폰번호
+    phone: String
+    #활성화여부
+    isEnabled: Boolean
+    #탈퇴여부
+    withdraw: Boolean
+    # 토큰, 디바이스토큰
+    deviceToken: String!
+    # 클라이언트아이디
+    clientId: String!
+    # 장비타입, IOS,ANDROID,WEB
+    deviceType: String!
+    # 장비모델, S960-GN 장비모델명
+    deviceModel: String
+    # 클라이언트버전
+    clientVersion: String
+    # 푸시허용여부
+    pushEnabled: Boolean!
+    # 생성시간
+    createdAt: Date
+    # 생성자
+    createdUserId: Int
+    # 수정시간
+    updatedAt: Date
+    # 수정자
+    updatedUserId: Int
+}
+
+input UserTokenInput {
+    #핸드폰번호
+    phone: String
+    # 토큰, 디바이스토큰
+    deviceToken: String!
+    # 클라이언트아이디
+    clientId: String!
+    # 장비타입, IOS,ANDROID,WEB
+    deviceType: String!
+    # 장비모델, S960-GN 장비모델명
+    deviceModel: String
+    # 클라이언트버전
+    clientVersion: String
+    # 푸시허용여부
+    pushEnabled: Boolean!
+}
+
+extend type Query {
+    # UserToken 전체조회
+    userTokens(
+        # page 정보 몇건씩 보여줄지 여부
+        first: Int!
+        # page 숫자 0부터 시작
+        page: Int!
+    ): UserTokenConnection @connection(for: "UserToken")
+}
+
+extend type Mutation {
+    # UserToken 생성, 중복토큰 입력시 기존 토큰 제거
+    createUserToken(data: UserTokenInput): UserToken
+
+    # UserToken 삭제
+    deleteUserToken(
+        # UserToken 아이디
+        userTokenId: ID!
+    ): Boolean
+}
+

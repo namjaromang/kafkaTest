@@ -1,0 +1,5 @@
+type Mutation {
+    pushReceive(
+        message: String
+    ): Boolean
+}

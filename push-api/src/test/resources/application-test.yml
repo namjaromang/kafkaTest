@@ -1,0 +1,11 @@
+spring:
+  liquibase:
+    contexts: dev
+  datasource:
+    username: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/push?zeroDateTimeBehavior=convertToNull&characterEncoding=UTF-8&serverTimezone=UTC
+
+app:
+  mariaDB4j:
+    databaseName: push

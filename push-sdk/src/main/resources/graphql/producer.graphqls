@@ -1,0 +1,8 @@
+scalar Object
+
+type Mutation {
+    pushSend(
+        message:Object
+    ): Boolean
+}
+

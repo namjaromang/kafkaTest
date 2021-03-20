@@ -1,0 +1,28 @@
+mutation{
+    createUserToken(data: {
+        phone: "01000000000"
+        deviceToken: "token"
+        clientId: "push-app"
+        deviceType: "ANDROID"
+        deviceModel: "S920N"
+        clientVersion: "0.1.1"
+        pushEnabled: false
+    }){
+        userTokenId
+        userId
+        username
+        phone
+        isEnabled
+        withdraw
+        deviceToken
+        clientId
+        deviceType
+        deviceModel
+        clientVersion
+        pushEnabled
+        createdAt
+        createdUserId
+        updatedAt
+        updatedUserId
+    }
+}

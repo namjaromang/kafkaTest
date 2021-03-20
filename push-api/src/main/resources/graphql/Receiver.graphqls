@@ -1,0 +1,58 @@
+scalar Date
+
+type Receiver {
+    # 수신자목록아이디
+    receiverId: Int!
+    # 보낸메시지아이디
+    sendMessageId: Int!
+    # 수신자아이디
+    receiveUserId: Int!
+    # 수신자명
+    receiverName: String
+    # 읽음여부, IOS는 기능미제공
+    read: Int!
+    # 수신시간
+    receiveAt: Date
+    # 생성시간
+    createdAt: Date
+    # 생성자
+    createdUserId: Int
+    # 수정시간
+    updatedAt: Date
+    # 수정자
+    updatedUserId: Int
+}
+
+input ReceiverInput {
+    # 수신자목록아이디
+    receiverId: Int!
+    # 보낸메시지아이디
+    sendMessageId: Int!
+    # 수신자아이디
+    receiveUserId: Int!
+    # 수신자명
+    receiverName: String
+    # 읽음여부, IOS는 기능미제공
+    read: Int!
+    # 수신시간
+    receiveAt: Date
+    # 생성시간
+    createdAt: Date!
+    # 생성자
+    createdUserId: Int!
+    # 수정시간
+    updatedAt: Date!
+    # 수정자
+    updatedUserId: Int!
+}
+
+extend type Query {
+    # Receiver 전체조회
+    receivers(
+        # page 정보 몇건씩 보여줄지 여부
+        first: Int!
+        # page 숫자 0부터 시작
+        page: Int!
+    ): ReceiverConnection @connection(for: "Receiver")
+}
+

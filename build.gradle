@@ -1,0 +1,143 @@
+plugins {
+    id 'org.springframework.boot' version '2.2.6.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'java'
+    id "org.jetbrains.kotlin.jvm" version "1.3.72"
+    id "com.diffplug.spotless" version "5.0.0"
+    id "org.jetbrains.gradle.plugin.idea-ext" version "0.7"
+}
+
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'kotlin'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'com.diffplug.spotless'
+
+    group = 'com.module'
+    version = '0.0.1-SNAPSHOT'
+    sourceCompatibility = '1.8'
+
+    repositories {
+        mavenCentral()
+    }
+
+    ext {
+        set('springCloudVersion', "2020.0.1")
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        }
+    }
+
+    spotless {
+        java {
+            targetExclude("src/main/generated/**")
+            googleJavaFormat("1.7").aosp()
+
+            removeUnusedImports()
+            trimTrailingWhitespace()
+            indentWithSpaces(4)
+            endWithNewline()
+
+            importOrder ''
+        }
+    }
+
+    task installGitHooks(type: Copy) {
+        from new File(rootProject.rootDir, 'pre-commit')
+        into { new File(rootProject.rootDir, '.git/hooks') }
+        fileMode 0777
+    }
+
+    build.dependsOn installGitHooks
+
+    idea.project.settings {
+        taskTriggers {
+            afterSync tasks.getByName("installGitHooks")
+        }
+    }
+}
+
+
+subprojects {
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+        implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+        implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+        implementation 'org.springframework.boot:spring-boot-starter-security'
+        implementation('org.springframework.security.oauth:spring-security-oauth2:2.3.3.RELEASE')
+        implementation('org.springframework.security.oauth:spring-security-oauth2')
+        implementation('org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.1.6.RELEASE')
+        implementation('org.springframework.security:spring-security-jwt:1.0.11.RELEASE')
+        implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+        //jwt
+        implementation 'io.jsonwebtoken:jjwt:0.9.0'
+
+        // log4jdbc
+        implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4:1.16'
+
+        // apache library
+        compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
+        compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.0'
+
+        // graphql
+        implementation 'com.graphql-java-kickstart:graphql-spring-boot-starter:7.0.1'
+        testCompile 'com.graphql-java-kickstart:graphql-spring-boot-starter-test:7.0.1'
+
+        // graphql to embed Altair tool
+        runtimeOnly 'com.graphql-java-kickstart:altair-spring-boot-starter:7.0.1'
+
+        // graphql date
+        implementation("com.zhokhov.graphql:graphql-datetime-spring-boot-starter:1.9.0")
+
+        // liquibase database change managerment
+        implementation "org.liquibase:liquibase-core"
+
+        compileOnly 'org.projectlombok:lombok'
+        implementation 'mysql:mysql-connector-java'
+        annotationProcessor 'org.projectlombok:lombok'
+        testImplementation('org.springframework.boot:spring-boot-starter-test') {
+            exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+        }
+
+        // https://mvnrepository.com/artifact/com.google.guava/guava
+        compile group: 'com.google.guava', name: 'guava', version: '21.0'
+        compile group: 'com.google.firebase', name: 'firebase-admin', version: '6.15.0'
+        compile group: 'com.github.maricn', name: 'logback-slack-appender', version: '1.4.0'
+
+        // test용 mariadb
+        implementation("ch.vorburger.mariaDB4j:mariaDB4j:2.4.0")
+    }
+
+    task initSourceFolders {
+        sourceSets*.java.srcDirs*.each {
+            if (!it.exists()) {
+                it.mkdirs()
+            }
+        }
+
+        sourceSets*.resources.srcDirs*.each {
+            if (!it.exists()) {
+                it.mkdirs()
+            }
+        }
+    }
+}
+
+project(':push-api') {
+    dependencies {
+        compile project(':push-sdk')
+    }
+}
+
+project(':push-sdk') {
+    dependencies {
+        implementation 'org.springframework.kafka:spring-kafka'
+        testImplementation 'org.springframework.kafka:spring-kafka-test'
+    }
+}

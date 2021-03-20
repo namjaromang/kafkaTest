@@ -1,0 +1,36 @@
+scalar Date
+
+type SendMessage {
+    # 보낸메시지아이디
+    sendMessageId: Int!
+    # 발신자아이디
+    sendUserId: Int
+    # 발신자명
+    senderName: String
+    # 제목
+    title: String!
+    # 내용
+    message: String!
+    # 데이터, { "data" : { "movePage":"payment", "moveId":"123123" } }
+    data: String
+    # 발송일시
+    sendAt: Date!
+    # 예약일시
+    sendReservationAt: Date
+    # 성공여부, 0:실패, 1:성공
+    sendSuccess: Int!
+    # 생성시간
+    createdAt: Date
+    # 생성자
+    createdUserId: Int
+}
+
+extend type Query {
+    # SendMessage 전체조회
+    sendMessages(
+        # page 정보 몇건씩 보여줄지 여부
+        first: Int!
+        # page 숫자 0부터 시작
+        page: Int!
+    ): SendMessageConnection @connection(for: "SendMessage")
+}
